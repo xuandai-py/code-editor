@@ -59,15 +59,16 @@ const EditorBox: React.FC<EditorBoxProps> = ({ language, editorValue, onChange }
 
     const handleEditorDidMount: OnMount = (editor, monaco) => {
         // editorRef.current = editor
-        dispatch(setEditorRef(editor))
-console.log(editor.getValue())
+        dispatch(setEditorRef({language: language, editor: editor}))
+        // console.log(editor)
         editor.onDidChangeModelContent(() => {
             onChange(editor.getValue())
-            console.log(editor.getValue())
+            // console.log(editor.getValue())
         });
 
         editor.getModel()?.updateOptions({ tabSize: 2 })
-        activateMonacoJSXHighlighter(editor, monaco)
+        // activateMonacoJSXHighlighter(editor, monaco)
+        // setEditorRef.current.push(edito)
     }
 
     const zoomLevel = useSelector((state) => state.editor.zoomLevel);

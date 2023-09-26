@@ -103,21 +103,35 @@ const Navbar = ({ showBundle }: { showBundle: boolean }) => {
 };
 
 const FormatSnippet: React.FC<{}> = () => {
-    const editorRef = useSelector((state) => state.editor.editorRef);
-    console.log(editorRef)
+    const editorRefs = useSelector((state) => state.editor.editorRef);
     const onFormatClick = async () => {
         try {
-            const unformatted = editorRef.getModel().getValue()
-            const formatted = await prettier.format(unformatted, {
-                parser: 'css',
-                // depcrepted   
-                plugins: [parserBabel, parserHtml, parserPostcss],
-                useTabs: false,
-                semi: true,
-                singleQuote: true
-            })
-      
-            editorRef.setValue(formatted)
+            const formattedEditors = await Promise.all(editorRefs.map(async (editorRef) => {
+                const unformatted = editorRef.editor.getModel().getValue();
+
+                let parser;
+                if (editorRef.language === 'javascript') {
+                    parser = 'babel';
+                } else if (editorRef.language === 'css') {
+                    parser = 'css';
+                } else if (editorRef.language === 'html') {
+                    parser = 'html';
+                }
+                const formatted = await prettier.format(unformatted, {
+                    parser: parser,
+                    // depcrepted   
+                    plugins: [parserBabel, parserHtml, parserPostcss],
+                    useTabs: false,
+                    semi: true,
+                    singleQuote: true,
+                    jsxBracketSameLine: true
+                });
+                return formatted;
+            }));
+
+            editorRefs.forEach((editorRef, index) => {
+                editorRef.editor.setValue(formattedEditors[index]);
+            });
         } catch (error) {
             console.error("An error occurred:", error)
             console.error("Error details: " + error.message)
@@ -169,8 +183,8 @@ const LanguageOptions: React.FC<{}> = () => {
                 onClose={handleCloseUserMenu}
             >
                 {settings.map((setting) => (
-                    <Link href={setting.path}>
-                        <MenuItem key={setting.key} disabled={!setting.status} onClick={handleCloseUserMenu}>
+                    <Link href={setting.path} key={setting.key}>
+                        <MenuItem  disabled={!setting.status} onClick={handleCloseUserMenu}>
 
                             <Typography textAlign="center">{setting.key}</Typography>
                         </MenuItem>
@@ -224,9 +238,7 @@ const AutoBundle: React.FC<{}> = () => {
         dispatch(setBundle(!state));
     };
 
-    React.useEffect(() => {
-        console.log(state)
-    }, [state])
+   
     return (
         <FormControlLabel
             control={

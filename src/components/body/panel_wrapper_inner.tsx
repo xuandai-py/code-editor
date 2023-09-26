@@ -41,7 +41,7 @@ const PanelWrapperInner: React.FC<EditorBoxProps> = (
   const dispatch = useDispatch();
 
 
-  const { frameHeight } = useSelector((state) => state.editor);
+  const { frameHeight, editorRef } = useSelector((state) => state.editor);
   const { code, err } = useSelector((state) => state.bundle);
 
   const handleInputChangeHTML = (input: string) => {
@@ -56,7 +56,6 @@ const PanelWrapperInner: React.FC<EditorBoxProps> = (
     // console.log('html: ', input);
     dispatch(setScript(input))
   }
-
 
   return (
     <Box sx={{ bgcolor: '#cfe8fc', height: `${frameHeight}px` }} >
@@ -166,12 +165,12 @@ const JSPanel: React.FC<JSPanelProps> = ({ onLayout, defaultLayout, jsPanel, eve
             defaultSize={defaultLayout[1]}
             minSize={20}
           >
-            <EditorBox
-              language="javascript"
-              editorValue={jsPanel.jsbase}
-              onChange={(value) => eventHandler.handleInputChangeJS(value)}
-            />
 
+            <EditorBox
+              language="css"
+              editorValue={jsPanel.cssbase}
+              onChange={(value) => eventHandler.handleInputChangeCSS(value)}
+            />
 
           </Panel>
           <PanelResizeHandle className="mx-1 w-2 bg-slate-300" />
@@ -182,12 +181,12 @@ const JSPanel: React.FC<JSPanelProps> = ({ onLayout, defaultLayout, jsPanel, eve
             minSize={20}
           >
 
-            <EditorBox
-              language="css"
-              editorValue={jsPanel.cssbase}
-              onChange={(value) => eventHandler.handleInputChangeCSS(value)}
-            />
 
+            <EditorBox
+              language="javascript"
+              editorValue={jsPanel.jsbase}
+              onChange={(value) => eventHandler.handleInputChangeJS(value)}
+            />
 
           </Panel>
         </PanelGroup>

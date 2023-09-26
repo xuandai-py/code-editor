@@ -2,8 +2,7 @@
 
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import EditorBox from "./code_editor_replace";
-import { useEffect, useState } from "react";
-import { Editor } from "@monaco-editor/react";
+import {  useState } from "react";
 import { htmlbase, cssbase, jsbase, rustbase } from '@/helper/files'
 import Preview from "./preview";
 import bundler from "@/helper/bundler";
@@ -30,13 +29,9 @@ const PanelWrapperInner: React.FC<EditorBoxProps> = (
   const onLayout = (sizes: number[]) => {
     document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
   };
-  // const { htmlbase, cssbase, jsbase } = codeBase;/
 
   const [html, setHtml] = useState(htmlbase)
   const [css, setCss] = useState(cssbase)
-  // const [js, setJs] = useState(jsbase)
-  // const [code, setCode] = useState('')
-  // const [err, setErr] = useState('')
 
   const dispatch = useDispatch();
 

@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -15,24 +15,16 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+
 import { FormControlLabel, SwipeableDrawer, Switch } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import ResizeEditor from "./reisze_editor";
-import { getFrameHeight, getZoomLevel, setBundle } from "@/redux/editor_slice";
 import { setCode, setErr } from "@/redux/bundle_slice";
 import bundler from "@/helper/bundler";
-import prettier from 'prettier';
-import parserBabel from 'prettier/parser-babel';
-import parserHtml from 'prettier/parser-html';
-import parserPostcss from 'prettier/parser-postcss';
+
+import LanguageOptions from "./lang_switch";
+import FormatSnippet from "./format";
+import SideBar from "./sidebar";
 
 // import { ESLint } from 'eslint';
 
@@ -49,7 +41,11 @@ const settings = [
         'key': 'Rust',
         'path': '/rust_re',
         'status': false
-
+    },
+    {
+        'key': 'Diff-Editor',
+        'path': '/compare_re',
+        'status': true
     }
 ];
 // import { NavLinks } from "@/constant";
@@ -61,7 +57,7 @@ const settings = [
 
 const Navbar = ({ showBundle }: { showBundle: boolean }) => {
 
-    const { script, bundle: bundleState } = useSelector((state) => state.editor);
+    const { zoomLevel, frameHeight, script, bundle: bundleState, editorRef } = useSelector((state) => state.editor);
     const dispatch = useDispatch();
     // const bundleState = useSelector(state => state.editor.bundle);
 
@@ -85,7 +81,7 @@ const Navbar = ({ showBundle }: { showBundle: boolean }) => {
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters sx={{ gap: 2 }}>
-                    <FormatSnippet />
+                    <FormatSnippet refObject={editorRef}/>
                     <LanguageOptions />
                     {!bundleState && showBundle &&
                         <Button
@@ -94,233 +90,13 @@ const Navbar = ({ showBundle }: { showBundle: boolean }) => {
                             onClick={onClickHandler}
                         >Bundle</Button>
                     }
-                    <SideBar showBundle={showBundle} />
+                    <SideBar {...{showBundle, zoomLevel, frameHeight, bundleState}} />
 
                 </Toolbar>
             </Container>
         </AppBar>
     );
 };
-
-const FormatSnippet: React.FC<{}> = () => {
-    const editorRefs = useSelector((state) => state.editor.editorRef);
-    const onFormatClick = async () => {
-        try {
-            const formattedEditors = await Promise.all(editorRefs.map(async (editorRef) => {
-                const unformatted = editorRef.editor.getModel().getValue();
-
-                let parser;
-                if (editorRef.language === 'javascript') {
-                    parser = 'babel';
-                } else if (editorRef.language === 'css') {
-                    parser = 'css';
-                } else if (editorRef.language === 'html') {
-                    parser = 'html';
-                }
-                const formatted = await prettier.format(unformatted, {
-                    parser: parser,
-                    // depcrepted   
-                    plugins: [parserBabel, parserHtml, parserPostcss],
-                    useTabs: false,
-                    semi: true,
-                    singleQuote: true,
-                    jsxBracketSameLine: true
-                });
-                return formatted;
-            }));
-
-            editorRefs.forEach((editorRef, index) => {
-                editorRef.editor.setValue(formattedEditors[index]);
-            });
-        } catch (error) {
-            console.error("An error occurred:", error)
-            console.error("Error details: " + error.message)
-        }
-    }
-    return (
-        <Button
-            variant="outlined"
-            sx={{ color: 'white', p: 1, border: '1px solid white' }}
-            onClick={onFormatClick} >
-            Format
-        </Button>
-    )
-}
-
-const LanguageOptions: React.FC<{}> = () => {
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-
-
-    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElUser(event.currentTarget);
-    };
-
-
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
-    return (
-        <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Languages options">
-                <Button onClick={handleOpenUserMenu} sx={{ color: 'white', p: 1, border: '1px solid white' }}>
-                    Languages
-                </Button>
-            </Tooltip>
-            <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-            >
-                {settings.map((setting) => (
-                    <Link href={setting.path} key={setting.key}>
-                        <MenuItem  disabled={!setting.status} onClick={handleCloseUserMenu}>
-
-                            <Typography textAlign="center">{setting.key}</Typography>
-                        </MenuItem>
-                    </Link>
-                ))}
-            </Menu>
-        </Box>
-    )
-}
-const SideBar = (props) => {
-    const innerPropsZoomEditor = {
-        title: 'zoom',
-        step: 1,
-        min: 0,
-        max: 30
-    }
-    const innerPropsFrameHeight = {
-        title: 'height',
-        step: 200,
-        min: 400,
-        max: 2000
-    }
-
-    const zoomLevel = useSelector((state) => state.editor.zoomLevel);
-    const frameHeight = useSelector((state) => state.editor.frameHeight);
-
-    return (
-        <Box sx={{ display: 'flex', flexGrow: 0, flexDirection: 'row', bgcolor: '#fff' }}>
-            <SwipeableTemporaryDrawer anchor={'right'}  >
-                <ResizeEditor
-                    inputState={frameHeight}
-                    innerProps={innerPropsFrameHeight}
-                    dispatchTo={getFrameHeight}
-                />
-                <ResizeEditor
-                    inputState={zoomLevel}
-                    innerProps={innerPropsZoomEditor}
-                    dispatchTo={getZoomLevel}
-                />
-
-                {props.showBundle && <AutoBundle />}
-            </SwipeableTemporaryDrawer>
-        </Box>
-    )
-}
-
-const AutoBundle: React.FC<{}> = () => {
-    const state = useSelector((state) => state.editor.bundle);
-    const dispatch = useDispatch();
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setBundle(!state));
-    };
-
-   
-    return (
-        <FormControlLabel
-            control={
-                <Switch checked={state} onChange={handleChange} name="auto_bundle" />
-            }
-            label="Auto Bundle"
-        />
-    )
-}
-
-type Anchor = 'right';
-interface SwipeableTemporaryDrawerProps {
-    anchor: Anchor,
-    children: React.ReactNode
-}
-
-const SwipeableTemporaryDrawer: React.FC<SwipeableTemporaryDrawerProps> = ({ anchor, children }) => {
-    const [state, setState] = React.useState({
-
-        right: false,
-    });
-
-    const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-        if (
-            event &&
-            event.type === 'keydown' &&
-            ((event as React.KeyboardEvent).key === 'Tab' ||
-                (event as React.KeyboardEvent).key === 'Shift')
-        ) {
-            return;
-        }
-
-        setState({ ...state, [anchor]: open });
-    };
-
-    const list = (anchor: Anchor) => (
-        <Box
-            sx={{ width: 250 }}
-            role="presentation"
-            // onClick={toggleDrawer(anchor, false)}
-            onKeyDown={toggleDrawer(anchor, false)}
-        >
-            <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-            <Divider />
-            <List sx={{ px: 2 }}>
-                {React.Children.map(children, (child, index) => (
-                    <ListItem key={index} disablePadding sx={{ my: 1 }}>
-                        {/* <ListItemText primary={child} /> */}
-                        {child}
-                    </ListItem>
-                ))}
-            </List>
-        </Box>
-    );
-
-    return (
-        <div>
-            <Button onClick={toggleDrawer(anchor, true)}>Options</Button>
-            <SwipeableDrawer
-                anchor={anchor}
-                open={state[anchor]}
-                onClose={toggleDrawer(anchor, false)}
-                onOpen={toggleDrawer(anchor, true)}
-
-            >
-                {list(anchor)}
-            </SwipeableDrawer>
-        </div>
-    );
-}
-
 const NavLogo = () => {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {

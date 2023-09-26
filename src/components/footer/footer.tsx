@@ -8,9 +8,8 @@ import Paper from "@mui/material/Paper";
 
 const Footer = () => {
     return (
-        <Paper sx={{marginTop: 'calc(10% + 60px)',
+        <Paper sx={{marginTop: 'calc(5% + 60px)',
         width: '100%',
-        // position: 'fixed',
         bottom: 0,
         }} component="footer" square variant="outlined">
           <Container maxWidth="lg">
@@ -29,10 +28,11 @@ const Footer = () => {
      */}
             <Box
               sx={{
+                display: "flex",
                 flexGrow: 1,
                 justifyContent: "center",
-                display: "flex",
-                mb: 2,
+                alignItems: "center",
+                m: 1,
               }}
             >
               <Typography variant="caption" color="initial">

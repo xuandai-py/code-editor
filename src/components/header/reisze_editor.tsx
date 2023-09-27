@@ -1,13 +1,9 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Slider from '@mui/material/Slider';
 import MuiInput from '@mui/material/Input';
-import VolumeUp from '@mui/icons-material/VolumeUp';
 import { Divider, Stack } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 
 const Input = styled(MuiInput)`
@@ -56,7 +52,7 @@ const ResizeEditor: React.FC<ResizeProps> = ({ inputState, innerProps, dispatchT
         <Stack direction="row" spacing={2}
             sx={{ px:2 , borderRadius: 2, border: '1px solid gray', alignItems: 'center' }}
         >
-            <Typography variant="subtitle1" gutterBottom sx={{ color: 'red' }} >
+            <Typography variant="subtitle1" gutterBottom sx={{ color: '#1976d2' }} >
                 {innerProps.title.toUpperCase()}
             </Typography>
             <Divider orientation="vertical" flexItem />

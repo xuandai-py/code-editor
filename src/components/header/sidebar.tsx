@@ -9,10 +9,33 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import GridViewIcon from '@mui/icons-material/GridView';
 import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import { setBundle, getFrameHeight, getZoomLevel } from '@/redux/editor_slice';
+import IconButton from '@mui/material/IconButton';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
 import React from 'react';
+
+const profile = [
+    {
+        name: 'github',
+        path: 'https://github.com/xuandai-py',
+        icon: GitHubIcon
+    },
+    {
+        name: 'about me',
+        path: 'https://daidesu.dev',
+        icon: GridViewIcon
+    },
+    {
+        name: 'mail',
+        path: 'mailto:xuandaibuinguyen@gmail.com',
+        icon: InboxIcon
+    }
+];
 
 const SideBar = (props) => {
     const innerPropsZoomEditor = {
@@ -30,7 +53,7 @@ const SideBar = (props) => {
 
     return (
         <Box sx={{ display: 'flex', flexGrow: 0, flexDirection: 'row', bgcolor: '#fff' }}>
-            <SwipeableTemporaryDrawer anchor={'right'}  >
+            <SwipeableTemporaryDrawer anchor={'right'} showEditorOptions={props.showEditorOptions} >
                 <ResizeEditor
                     inputState={props.frameHeight}
                     innerProps={innerPropsFrameHeight}
@@ -42,9 +65,9 @@ const SideBar = (props) => {
                     dispatchTo={getZoomLevel}
                 />
 
-                {props.showBundle && (
-                    <AutoBundle bundleState={props.bundleState} />
-                )}
+                <AutoBundle bundleState={props.bundleState} />
+                {/* {props.showBundle && (
+                )} */}
             </SwipeableTemporaryDrawer>
         </Box>
     )
@@ -64,10 +87,11 @@ const AutoBundle = ({ bundleState }: { bundleState: boolean }) => {
     )
 }
 
-const SwipeableTemporaryDrawer: React.FC<SwipeableTemporaryDrawerProps> = ({ anchor, children }) => {
-    const [state, setState] = React.useState( {right: false});
+const SwipeableTemporaryDrawer: React.FC<SwipeableTemporaryDrawerProps> = ({ anchor, children, showEditorOptions }) => {
+    // const [state, setState] = React.useState({ right: false });
+    const [open, setOpen] = React.useState(false);
 
-    const toggleDrawer = (anchor: string, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+    const toggleDrawer = (isOpen: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (
             event &&
             event.type === 'keydown' &&
@@ -76,8 +100,9 @@ const SwipeableTemporaryDrawer: React.FC<SwipeableTemporaryDrawerProps> = ({ anc
         ) {
             return;
         }
+        setOpen(isOpen);
 
-        setState({ ...state, [anchor]: open });
+        // setState({ ...state, [anchor]: open });
     };
 
     const list = (anchor: string) => (
@@ -88,20 +113,20 @@ const SwipeableTemporaryDrawer: React.FC<SwipeableTemporaryDrawerProps> = ({ anc
             onKeyDown={toggleDrawer(anchor, false)}
         >
             <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {profile.map((item, index) => (
+                    <ListItem key={index} disablePadding>
+                        <ListItemButton href={item.path} target="_blank">
+                            <ListItemIcon >
+                                {< item.icon />}
                             </ListItemIcon>
-                            <ListItemText primary={text} />
+                            <ListItemText primary={item.name} sx={{ textTransform: 'capitalize' }} />
                         </ListItemButton>
                     </ListItem>
                 ))}
             </List>
             <Divider />
             <List sx={{ px: 2 }}>
-                {React.Children.map(children, (child, index) => (
+                {showEditorOptions && React.Children.map(children, (child, index) => (
                     <ListItem key={index} disablePadding sx={{ my: 1 }}>
                         {/* <ListItemText primary={child} /> */}
                         {child}
@@ -113,14 +138,18 @@ const SwipeableTemporaryDrawer: React.FC<SwipeableTemporaryDrawerProps> = ({ anc
 
     return (
         <div>
-            <Button onClick={toggleDrawer(anchor, true)}>Options</Button>
+            <Button onClick={() => setOpen(true)}>Options</Button>
             <SwipeableDrawer
                 anchor={'right'}
-                open={state[anchor]}
-                onClose={toggleDrawer(anchor, false)}
-                onOpen={toggleDrawer(anchor, true)}
+                open={open}
+                onClose={toggleDrawer(false)}
+                onOpen={toggleDrawer(true)}
 
             >
+                <IconButton sx={{ borderRadius: 0 }} size="large" onClick={() => setOpen(false)}>
+                    <ChevronRightIcon />
+                </IconButton>
+                <Divider />
                 {list(anchor)}
             </SwipeableDrawer>
         </div>

@@ -1,6 +1,7 @@
 'use client'
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from 'next/navigation'
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -25,40 +26,16 @@ import bundler from "@/helper/bundler";
 import LanguageOptions from "./lang_switch";
 import FormatSnippet from "./format";
 import SideBar from "./sidebar";
-
-// import { ESLint } from 'eslint';
-
+import BundleButton from "./exe_button";
+import Corner from "../theme_registry/octoSign";
 
 const pages = ['Products', 'Pricing', 'Blog'];
-const settings = [
-    {
-        'key': 'Javascript',
-        'path': '/js_re',
-        'status': true
-    },
 
-    {
-        'key': 'Rust',
-        'path': '/rust_re',
-        'status': false
-    },
-    {
-        'key': 'Diff-Editor',
-        'path': '/compare_re',
-        'status': true
-    }
-];
-// import { NavLinks } from "@/constant";
-// import { getCurrentUser } from "@/lib/session";
-
-// import AuthProviders from "./AuthProviders";
-// import ProfileMenu from "./ProfileMenu";
-
-
-const Navbar = ({ showBundle }: { showBundle: boolean }) => {
+const Navbar = ({ showEditorOptions }: { showEditorOptions: boolean }) => {
 
     const { zoomLevel, frameHeight, script, bundle: bundleState, editorRef } = useSelector((state) => state.editor);
     const dispatch = useDispatch();
+    const pathname = usePathname();
     // const bundleState = useSelector(state => state.editor.bundle);
 
     const onClickHandler = async () => {
@@ -77,24 +54,25 @@ const Navbar = ({ showBundle }: { showBundle: boolean }) => {
         return () => clearInterval(interval);
     }, [script, bundleState]);
 
-    return (
-        <AppBar position="static">
-            <Container maxWidth="xl">
-                <Toolbar disableGutters sx={{ gap: 2 }}>
-                    <FormatSnippet refObject={editorRef}/>
-                    <LanguageOptions />
-                    {!bundleState && showBundle &&
-                        <Button
-                            variant="outlined"
-                            sx={{ color: 'white', p: 1, border: '1px solid white' }}
-                            onClick={onClickHandler}
-                        >Bundle</Button>
-                    }
-                    <SideBar {...{showBundle, zoomLevel, frameHeight, bundleState}} />
+    // const currentSetting = settings.find((setting) => setting.path === pathname);
 
-                </Toolbar>
-            </Container>
-        </AppBar>
+    return (
+        <>
+            <Corner />
+            <AppBar position="static">
+                <Container maxWidth="xl">
+                    <Toolbar disableGutters sx={{ gap: 2 , justifyContent: 'end'}}>
+                        <NavLogo />
+                        {showEditorOptions && <FormatSnippet refObject={editorRef} />}
+                        {!bundleState && showEditorOptions && <BundleButton onClickHandler={onClickHandler} />}
+
+                        <LanguageOptions />
+                        <SideBar {...{ showEditorOptions, zoomLevel, frameHeight, bundleState }} />
+
+                    </Toolbar>
+                </Container>
+            </AppBar>
+        </>
     );
 };
 const NavLogo = () => {
@@ -107,62 +85,28 @@ const NavLogo = () => {
     };
     return (
         <>
-            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
             <Typography
                 variant="h6"
                 noWrap
                 component="a"
                 href="/"
                 sx={{
-                    mr: 2,
+                    // mr: 2,
+                    left: '50%',
                     display: { xs: 'none', md: 'flex' },
                     fontFamily: 'monospace',
                     fontWeight: 700,
                     letterSpacing: '.3rem',
                     color: 'inherit',
                     textDecoration: 'none',
+                    position: 'absolute',
                 }}
             >
                 LOGO
             </Typography>
 
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleOpenNavMenu}
-                    color="inherit"
-                >
-                    <MenuIcon />
-                </IconButton>
-                <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorElNav}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'left',
-                    }}
-                    open={Boolean(anchorElNav)}
-                    onClose={handleCloseNavMenu}
-                    sx={{
-                        display: { xs: 'block', md: 'none' },
-                    }}
-                >
-                    {pages.map((page) => (
-                        <MenuItem key={page} onClick={handleCloseNavMenu}>
-                            <Typography textAlign="center">{page}</Typography>
-                        </MenuItem>
-                    ))}
-                </Menu>
-            </Box>
-            <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+           
             <Typography
                 variant="h5"
                 noWrap
@@ -181,17 +125,6 @@ const NavLogo = () => {
             >
                 LOGO
             </Typography>
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                {pages.map((page) => (
-                    <Button
-                        key={page}
-                        onClick={handleCloseNavMenu}
-                        sx={{ my: 2, color: 'white', display: 'block' }}
-                    >
-                        {page}
-                    </Button>
-                ))}
-            </Box>
         </>
     )
 }

@@ -12,7 +12,7 @@ export default function JSLayout({
 }) {
   return (
     <>
-      <Navbar showBundle={true} />
+      <Navbar showEditorOptions={true} />
       <Box
         component="main"
         sx={{

@@ -1,16 +1,15 @@
 // this page contain all features-components for JS bundle - console - result
 // `app/page.tsx` is the UI for the `/` URL
 
-import Tabs from "@/components/body/other";
 import PanelWrapperInner from "@/components/body/panel_wrapper_inner";
 import { cookies } from "next/headers";
 import './page.css'
-import { Box, Container, CssBaseline, Typography } from "@mui/material";
+import { Container, CssBaseline } from "@mui/material";
 
 const PanelWrapper = () => {
   const layout = cookies().get("react-resizable-panels:layout");
 
-  let defaultLayout;
+  let defaultLayout = [30, 40, 30, 100];
   if (layout) {
     defaultLayout = JSON.parse(layout.value);
   }

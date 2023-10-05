@@ -1,6 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import JsonView from 'react18-json-view'
 import 'react18-json-view/src/style.css'
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { Badge, Chip } from "@mui/material";
+
 // import './preview.css';
 
 interface PreviewProps {
@@ -32,6 +38,41 @@ interface PreviewProps {
       </script>
       </body> */}
 
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  // dir?: string;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
 const Preview: React.FC<PreviewProps> = ({ code, err, htmlbase, cssbase }) => {
 
   // console.log(code, err);
@@ -51,7 +92,9 @@ const Preview: React.FC<PreviewProps> = ({ code, err, htmlbase, cssbase }) => {
         <script>
           const handleError = (err) => {
             const root = document.querySelector('#root');
-              root.innerHTML = '<div style="color: red;"> <h4>Runtime Error: (Bruhhh, funny!) </h4>' + err + '</div> <h5>/n Check the console for more infor</h5>';
+            const innerResultConsoler = document.querySelector('#result');
+              root.innerHTML = '<div style="color: red;"> <h4>Runtime Error: </h4>' + err + '</div> <h5>/n Check the browser console for more infor</h5>';
+              innerResultConsoler.innerHTML = '<div style="color: red;"> <h4>Runtime Error: </h4>' + err + '</div> <h5>/n Check the browser console for more infor</h5>';
               console.error(err);
           }
 
@@ -75,12 +118,16 @@ const Preview: React.FC<PreviewProps> = ({ code, err, htmlbase, cssbase }) => {
 
   const iframe = useRef<any>()
   const consoleContainerRef = useRef(null);
+  const [noticeInvisible, setNoticeInvisible] = useState(false);
+
 
   useEffect(() => {
-    iframe.current.srcdoc = html
-    setTimeout(() => {
-      iframe.current.contentWindow.postMessage(code, '*')
-    }, 50)
+    if (iframe.current) {
+      iframe.current.srcdoc = html;
+      setTimeout(() => {
+        iframe.current.contentWindow.postMessage(code, '*');
+      }, 50);
+    }
   }, [code])
 
   // const [consoleText, setConsoleText] = useState([]);
@@ -102,12 +149,32 @@ const Preview: React.FC<PreviewProps> = ({ code, err, htmlbase, cssbase }) => {
   // const formatConsoleMessage = (method, message) => {
   //   return `<div>${method.toUpperCase()}: ${message.join(' ')}</div>`;
   // };
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
 
   return (
 
-    <div style={{ position: "relative", height: "100%", flexGrow: 1 }}>
-      <div id="result" style={{ backgroundColor: 'white' }}>
+    <Box sx={{ width: '100%', }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={value}  onChange={handleChange} aria-label="basic tabs example"        >
+          <Tab label="Output" {...a11yProps(0)} />
+          <Tab
+            label={
+              <>
+                Console
+                {err && <Chip label="!" sx={{border: '1px solid red', backgroundColor: '#fff', color: 'red'}}/>}
+              </>
+            } {...a11yProps(1)}
+            sx={{ flexDirection: 'row', gap: 1 }}
+          />
+
+        </Tabs>
+      </Box>
+      <TabPanel value={value} index={0}>
         <iframe
           title='preview'
           style={{ color: '#000', minHeight: '200px', height: '450px', maxHeight: '800px', width: '100%' }}
@@ -116,41 +183,53 @@ const Preview: React.FC<PreviewProps> = ({ code, err, htmlbase, cssbase }) => {
           srcDoc={html}
 
         />
-        {err && <div className="preview-error" style={{ position: 'absolute', top: '10px', left: '10px', color: 'red' }}>Unexpected error... {err}</div>}
-      </div>
-      {/*  <div id="tabs">
-        <ul>
-          <li><a href="#result">Result</a></li>
-          <li><a href="#console">Console</a></li>
-        </ul>
-        <div id="tab-content">
-         <div id="console">
-            <div
-              id="console-container"
-              style={{
-                minHeight: '200px',
-                height: '500px',
-                maxHeight: '800px',
-                width: '100%',
-                border: '1px solid #3182ce',
-                overflowY: 'scroll',
-                borderRadius: '5px',
-              }}>
-
-              {consoleText.length > 0 &&
-                consoleText.map((log, index) => (
-                  <div
-                    key={index}
-                    dangerouslySetInnerHTML={{ __html: formatConsoleMessage(log.method, log.message) }}
-                  ></div>
-                ))}
-            </div>
-          </div> 
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <div style={{ position: "relative", height: "100%", flexGrow: 1 }}>
+          <div id="result" style={{ backgroundColor: 'white' }}>
+            {err && <div className="preview-error" style={{ position: 'absolute', top: '10px', left: '10px', color: 'red' }}>Unexpected error... {err}</div>}
+          </div>
         </div>
-      </div>
-*/}
-    </div>
+      </TabPanel>
+
+    </Box>
   )
+  // <div style={{ position: "relative", height: "100%", flexGrow: 1 }}>
+  //<div id="result" style={{ backgroundColor: 'white' }}> 
+
+  //   {/*  <div id="tabs">
+  //         <ul>
+  //           <li><a href="#result">Result</a></li>
+  //           <li><a href="#console">Console</a></li>
+  //         </ul>
+  //         <div id="tab-content">
+  //          <div id="console">
+  //             <div
+  //               id="console-container"
+  //               style={{
+  //                 minHeight: '200px',
+  //                 height: '500px',
+  //                 maxHeight: '800px',
+  //                 width: '100%',
+  //                 border: '1px solid #3182ce',
+  //                 overflowY: 'scroll',
+  //                 borderRadius: '5px',
+  //               }}>
+
+  //               {consoleText.length > 0 &&
+  //                 consoleText.map((log, index) => (
+  //                   <div
+  //                     key={index}
+  //                     dangerouslySetInnerHTML={{ __html: formatConsoleMessage(log.method, log.message) }}
+  //                   ></div>
+  //                 ))}
+  //             </div>
+  //           </div> 
+  //         </div>
+  //       </div>
+  // */}
+  // </div >
+  // <PreviewTabs />
 }
 
 

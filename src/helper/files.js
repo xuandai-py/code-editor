@@ -173,7 +173,7 @@ fn main() {
   
   }
 `
-
+export const tsbase = 'const pseudo = ({input} : {input: string}) => console.log(input);'
 
 export const files = [
   {
@@ -195,6 +195,11 @@ export const files = [
     name: "",
     language: "rust",
     value: rustbase
+  },
+  {
+    name: 'script.ts',
+    language: 'typescript',
+    value: tsbase
   }
 ];
 
@@ -210,6 +215,12 @@ export const langs = [
   {
       'key': 'Rust',
       'path': '/rust_re',
+      'status': false
+  },
+
+  {
+      'key': 'Typescript',
+      'path': '/ts_re',
       'status': false
   },
   {

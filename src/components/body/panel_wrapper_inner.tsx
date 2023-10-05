@@ -3,7 +3,7 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import EditorBox from "./code_editor_replace";
 import { useState } from "react";
-import { htmlbase, cssbase, jsbase, rustbase } from '@/helper/files'
+import { htmlbase, cssbase, jsbase, rustbase, tsbase } from '@/helper/files'
 import Preview from "./preview";
 import bundler from "@/helper/bundler";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,6 +48,47 @@ const RustPanel: React.FC<RustPanel> = ({ onLayout, defaultLayout, rustPanel, ev
           minSize={20}>
           <Preview htmlbase={preview.html} cssbase={preview.css} code={preview.code} err={preview.err} />
         </Panel>
+      </PanelGroup>
+    </>
+  )
+}
+
+type TSProps = {
+  tsBase: string
+}
+interface TSPanel {
+  onLayout,
+  defaultLayout,
+  tsPanel: TSProps,
+  eventHandler,
+  preview
+
+}
+const TSPanel: React.FC<TSPanel> = ({ onLayout, defaultLayout, tsPanel, eventHandler, preview }) => {
+  return (
+    <>
+      <PanelGroup direction="vertical" onLayout={onLayout}>
+
+        <Panel
+          className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
+          defaultSize={defaultLayout[0]}
+          minSize={20}
+        >
+          {/* <EditorBox language="html" editorValue={codeBase} onChange={handleInputChangeHTML} /> */}
+          <EditorBox
+            language="typescript"
+            editorValue={tsPanel.tsBase}
+            onChange={(e) => eventHandler.handleInputChangeTS(e)}
+          />
+        </Panel>
+
+        {/* <PanelResizeHandle className="mx-1 h-2 bg-slate-300" />
+
+        <Panel className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
+          defaultSize={defaultLayout[1]}
+          minSize={20}>
+          <Preview htmlbase={preview.html} cssbase={preview.css} code={preview.code} err={preview.err} />
+        </Panel> */}
       </PanelGroup>
     </>
   )
@@ -101,7 +142,7 @@ const JSPanel: React.FC<JSPanelProps> = ({ onLayout, defaultLayout, jsPanel, eve
             />
 
           </Panel>
-          <PanelResizeHandle className="mx-1 w-2 bg-slate-300" />
+          <PanelResizeHandle className="mx-1  w-2 bg-slate-300 " />
 
           <Panel
             className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
@@ -119,11 +160,13 @@ const JSPanel: React.FC<JSPanelProps> = ({ onLayout, defaultLayout, jsPanel, eve
           </Panel>
         </PanelGroup>
       </Panel>
-      <PanelResizeHandle className="mx-1 h-2 bg-slate-300" />
+      <PanelResizeHandle className="mx-1 my-2 h-2 bg-slate-300" />
 
-      <Panel className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
+      <Panel className="bg-slate-100 rounded-lg p-1"
         defaultSize={defaultLayout[3]}
-        minSize={20}>
+        minSize={20}
+        style={{ overflowY: 'scroll' }}
+      >
         <Preview htmlbase={preview.html} cssbase={preview.css} code={preview.code} err={preview.err} />
       </Panel>
     </PanelGroup>
@@ -132,10 +175,11 @@ const JSPanel: React.FC<JSPanelProps> = ({ onLayout, defaultLayout, jsPanel, eve
 
 const paneltype = {
   js: JSPanel,
-  rust: RustPanel
+  rust: RustPanel,
+  ts: TSPanel
 }
 
-type PanelTypesProp = 'js' | 'rust';
+type PanelTypesProp = 'js' | 'rust' | 'ts';
 
 interface EditorBoxProps {
   defaultLayout: number[];
@@ -158,7 +202,7 @@ const PanelWrapperInner: React.FC<EditorBoxProps> = (
 
   const [html, setHtml] = useState(htmlbase)
   const [css, setCss] = useState(cssbase)
-
+  const [ts, setTs] = useState(tsbase)
   const dispatch = useDispatch();
 
 
@@ -174,12 +218,22 @@ const PanelWrapperInner: React.FC<EditorBoxProps> = (
     setCss(input)
   }
   const handleInputChangeJS = (input: string) => {
-    // console.log('html: ', input);
+    console.log('html: ', input);
     dispatch(setScript(input))
   }
 
+  const handleInputChangeTS = (input: string) => {
+    console.log('e: ', input);
+let re;
+
+
+    console.log('transpiled: ', re);
+
+    setTs(input)
+  }
+
   return (
-    <Box sx={{ bgcolor: '#cfe8fc', height: `${frameHeight}px` }} >
+    <Box sx={{ height: `${frameHeight}px` }} >
       {type === 'js'
         ?
         <JSPanel
@@ -189,15 +243,23 @@ const PanelWrapperInner: React.FC<EditorBoxProps> = (
           eventHandler={{ handleInputChangeHTML, handleInputChangeCSS, handleInputChangeJS }}
           preview={{ html, css, code, err }}
         />
-        :
-        // extend by swc
-        <RustPanel
-          onLayout={onLayout}
-          defaultLayout={defaultLayout}
-          rustPanel={{ rustbase }}
-          eventHandler={{ handleInputChangeHTML, handleInputChangeCSS, handleInputChangeJS }}
-          preview={{ html, css, code, err }}
-        />
+        : type === 'rust' ?
+          // extend by swc
+          <RustPanel
+            onLayout={onLayout}
+            defaultLayout={defaultLayout}
+            rustPanel={{ rustbase }}
+            eventHandler={{ handleInputChangeHTML, handleInputChangeCSS, handleInputChangeJS }}
+            preview={{ html, css, code, err }}
+          />
+
+          : <TSPanel
+            onLayout={onLayout}
+            defaultLayout={defaultLayout}
+            tsPanel={{ tsbase }}
+            eventHandler={{ handleInputChangeTS}}
+            preview={{ html, css, code, err }}
+          />
       }
 
     </Box>

@@ -76,7 +76,6 @@ const EditorBox: React.FC<EditorBoxProps> = ({ language, editorValue, onChange }
 
     return (
 
-        <>
             <BaseEditor
                 language={language}
                 value={editorValue}
@@ -84,7 +83,6 @@ const EditorBox: React.FC<EditorBoxProps> = ({ language, editorValue, onChange }
                 // zoomLevel={16}
                 onMount={handleEditorDidMount}
             />
-        </>
     )
 }
 

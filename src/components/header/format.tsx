@@ -1,12 +1,13 @@
-import  Button from "@mui/material/Button";
+import Button from "@mui/material/Button";
 import prettier from 'prettier';
 import parserBabel from 'prettier/parser-babel';
 import parserHtml from 'prettier/parser-html';
 import parserPostcss from 'prettier/parser-postcss';
+import { CommonButtons } from "./button";
 
 
 
-const FormatSnippet: React.FC<{}> = ({refObject}) => {
+const FormatSnippet: React.FC<{}> = ({ refObject }) => {
     const editorRefs = refObject;
     const onFormatClick = async () => {
         try {
@@ -43,12 +44,9 @@ const FormatSnippet: React.FC<{}> = ({refObject}) => {
         }
     }
     return (
-        <Button
-            variant="outlined"
-            sx={{ color: 'white', p: 1, border: '1px solid white' }}
-            onClick={onFormatClick} >
+        <CommonButtons onClickEvent={onFormatClick}        >
             Format
-        </Button>
+        </CommonButtons>
     )
 }
 

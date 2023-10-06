@@ -1,5 +1,3 @@
-// this page contain all features-components for JS bundle - console - result
-// `app/page.tsx` is the UI for the `/` URL
 
 import PanelWrapperInner from "@/components/body/panel_wrapper_inner";
 import { cookies } from "next/headers";

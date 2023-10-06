@@ -1,15 +1,11 @@
-import Button from "@mui/material/Button"
+import { CommonButtons } from "./button"
 
 const BundleButton = ({ onClickHandler }: { onClickHandler: () => void }) => {
 
     return (
-        <Button
-            variant="outlined"
-            sx={{ color: 'white', p: 1, border: '1px solid white' }}
-            onClick={onClickHandler}
-        >
+        <CommonButtons onClickEvent={onClickHandler}        >
             Bundle
-        </Button>
+        </CommonButtons>
     )
 }
 

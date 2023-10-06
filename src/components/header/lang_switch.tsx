@@ -9,10 +9,11 @@ import Tooltip from '@mui/material/Tooltip';
 import Link from "next/link";
 import React from "react";
 import { Divider } from "@mui/material";
+import { CommonButtons } from "./button";
 
 
 
-const LanguageOptions: React.FC<{}> = () => {
+const LanguageOptions: React.FC<{}> = ({ style }) => {
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
 
@@ -25,12 +26,11 @@ const LanguageOptions: React.FC<{}> = () => {
         setAnchorElUser(null);
     };
     return (
-        <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Languages options">
-                <Button onClick={handleOpenUserMenu} sx={{ color: 'white', p: 1, border: '1px solid white' }}>
-                    Languages
-                </Button>
-            </Tooltip>
+        <Box sx={{ flexGrow: 0,  ...style }}>
+                <CommonButtons onClickEvent={handleOpenUserMenu}>
+                    languages
+                </CommonButtons>
+            
             <Menu
                 sx={{ mt: '45px' }}
                 id="menu-appbar"
@@ -41,7 +41,7 @@ const LanguageOptions: React.FC<{}> = () => {
                 }}
                 keepMounted
                 transformOrigin={{
-                    vertical: 'top',
+                    vertical: { xs: 'bottom', sm: 'top' },
                     horizontal: 'right',
                 }}
                 open={Boolean(anchorElUser)}
@@ -49,8 +49,8 @@ const LanguageOptions: React.FC<{}> = () => {
             >
                 {langs.map((setting) => (
                     <Link href={setting.path} key={setting.key}>
-                        {setting.path.match('compare_re') && <Divider variant="middle"/>}
-                        <MenuItem  disabled={!setting.status} onClick={handleCloseUserMenu}>
+                        {setting.path.match('compare_re') && <Divider variant="middle" />}
+                        <MenuItem disabled={!setting.status} onClick={handleCloseUserMenu}>
 
                             <Typography textAlign="center">{setting.key}</Typography>
                         </MenuItem>

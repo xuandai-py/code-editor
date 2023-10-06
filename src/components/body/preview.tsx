@@ -5,8 +5,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Badge, Chip } from "@mui/material";
-
+import { Chip } from "@mui/material";
 // import './preview.css';
 
 interface PreviewProps {
@@ -160,13 +159,13 @@ const Preview: React.FC<PreviewProps> = ({ code, err, htmlbase, cssbase }) => {
 
     <Box sx={{ width: '100%', }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value}  onChange={handleChange} aria-label="basic tabs example"        >
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example"        >
           <Tab label="Output" {...a11yProps(0)} />
           <Tab
             label={
               <>
                 Console
-                {err && <Chip label="!" sx={{border: '1px solid red', backgroundColor: '#fff', color: 'red'}}/>}
+                {err && <Chip label="!" sx={{ border: '1px solid red', backgroundColor: '#fff', color: 'red' }} />}
               </>
             } {...a11yProps(1)}
             sx={{ flexDirection: 'row', gap: 1 }}
@@ -175,6 +174,7 @@ const Preview: React.FC<PreviewProps> = ({ code, err, htmlbase, cssbase }) => {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
+       
         <iframe
           title='preview'
           style={{ color: '#000', minHeight: '200px', height: '450px', maxHeight: '800px', width: '100%' }}

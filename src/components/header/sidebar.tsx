@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import ResizeEditor from "./reisze_editor";
 import { FormControlLabel, SwipeableDrawer, Switch } from "@mui/material";
 import List from '@mui/material/List';
+import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -11,13 +12,16 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import GridViewIcon from '@mui/icons-material/GridView';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import { setBundle, getFrameHeight, getZoomLevel } from '@/redux/editor_slice';
 import IconButton from '@mui/material/IconButton';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import React from 'react';
+import LanguageOptions from './lang_switch';
+import BundleButton from './exe_button';
+import { FunctionalButtons } from './nav_bar';
 
 const profile = [
     {
@@ -37,7 +41,7 @@ const profile = [
     }
 ];
 
-const SideBar = (props) => {
+const SideBar = ({ setIsLoading, showEditorOptions }: { setIsLoading: boolean, showEditorOptions: boolean }) => {
     const innerPropsZoomEditor = {
         title: 'zoom',
         step: 1,
@@ -50,26 +54,33 @@ const SideBar = (props) => {
         min: 400,
         max: 2000
     }
+    const { zoomLevel, frameHeight, bundle: bundleState } = useSelector((state) => state.editor);
 
     return (
         <Box sx={{ display: 'flex', flexGrow: 0, flexDirection: 'row', bgcolor: '#fff' }}>
-            <SwipeableTemporaryDrawer anchor={'right'} showEditorOptions={props.showEditorOptions} >
+            <SwipeableTemporaryDrawer anchor={'right'} showEditorOptions={showEditorOptions} >
                 <ResizeEditor
-                    inputState={props.frameHeight}
+                    inputState={frameHeight}
                     innerProps={innerPropsFrameHeight}
                     dispatchTo={getFrameHeight}
                 />
                 <ResizeEditor
-                    inputState={props.zoomLevel}
+                    inputState={zoomLevel}
                     innerProps={innerPropsZoomEditor}
                     dispatchTo={getZoomLevel}
                 />
 
-                <AutoBundle bundleState={props.bundleState} />
-                {/* {props.showBundle && (
-                )} */}
+                <AutoBundle bundleState={bundleState} />
+                <FunctionalButtons
+                    setIsLoading={setIsLoading}
+                    showEditorOptions={showEditorOptions}
+                    sx={{
+                        display: { xs: 'flex', sm: 'none' },
+                        width:'100%'
+                    }}
+                />
             </SwipeableTemporaryDrawer>
-        </Box>
+        </Box >
     )
 }
 
@@ -133,6 +144,7 @@ const SwipeableTemporaryDrawer: React.FC<SwipeableTemporaryDrawerProps> = ({ anc
                     </ListItem>
                 ))}
             </List>
+            <Divider />
         </Box>
     );
 

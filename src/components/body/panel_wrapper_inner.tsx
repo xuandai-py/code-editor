@@ -7,8 +7,11 @@ import { htmlbase, cssbase, jsbase, rustbase, tsbase } from '@/helper/files'
 import Preview from "./preview";
 import bundler from "@/helper/bundler";
 import { useDispatch, useSelector } from "react-redux";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 import { setScript } from "@/redux/editor_slice";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { useMediaQuery, useTheme } from "@mui/material";
 
 
 type RustProps = {
@@ -107,59 +110,137 @@ interface JSPanelProps {
   eventHandler,
   preview
 }
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      style={{ height: '100%' }}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ height: '100%', p: 1 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
 const JSPanel: React.FC<JSPanelProps> = ({ onLayout, defaultLayout, jsPanel, eventHandler, preview }) => {
+
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <PanelGroup direction="vertical" onLayout={onLayout}>
       <Panel
         className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
       >
-        <PanelGroup direction="horizontal" >
-          <Panel
-            className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
-            defaultSize={defaultLayout[0]}
-            minSize={20}
-          >
-            {/* <EditorBox language="html" editorValue={codeBase} onChange={handleInputChangeHTML} /> */}
-            <EditorBox
-              language="html"
-              editorValue={jsPanel.htmlbase}
-              onChange={(value) => eventHandler.handleInputChangeHTML(value)}
-            />
+        {isMobile ? (
+          <>
+            <Box sx={{ width: '100%', height: '100%', }}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs
+                  value={activeTab}
+                  onChange={handleTabChange}
+                  indicatorColor="primary"
+                  textColor="primary"
+                // centered
+                >
+                  <Tab label="html" />
+                  <Tab label="css" />
+                  <Tab label="javascript" />
 
-          </Panel>
-          <PanelResizeHandle className="mx-1 w-2 bg-slate-300" />
+                </Tabs>
+              </Box>
+              <TabPanel value={activeTab} index={0}>
+                <EditorBox
+                  language="html"
+                  editorValue={jsPanel.htmlbase}
+                  onChange={(value) => eventHandler.handleInputChangeHTML(value)}
+                />
+              </TabPanel>
+              <TabPanel value={activeTab} index={1}>
+                <EditorBox
+                  language="css"
+                  editorValue={jsPanel.cssbase}
+                  onChange={(value) => eventHandler.handleInputChangeCSS(value)}
+                />
+              </TabPanel>
+              <TabPanel value={activeTab} index={2}>
+                <EditorBox
+                  language="javascript"
+                  editorValue={jsPanel.jsbase}
+                  onChange={(value) => eventHandler.handleInputChangeJS(value)}
+                />
+              </TabPanel>
+            </Box>
+          </>
+        ) : (
+          <PanelGroup direction="horizontal" >
+            <Panel
+              className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
+              defaultSize={defaultLayout[0]}
+              minSize={20}
+            >
+              {/* <EditorBox language="html" editorValue={codeBase} onChange={handleInputChangeHTML} /> */}
+              <EditorBox
+                language="html"
+                editorValue={jsPanel.htmlbase}
+                onChange={(value) => eventHandler.handleInputChangeHTML(value)}
+              />
 
-          <Panel
-            className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
-            defaultSize={defaultLayout[1]}
-            minSize={20}
-          >
+            </Panel>
+            <PanelResizeHandle className="mx-1 w-2 bg-slate-300" />
 
-            <EditorBox
-              language="css"
-              editorValue={jsPanel.cssbase}
-              onChange={(value) => eventHandler.handleInputChangeCSS(value)}
-            />
+            <Panel
+              className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
+              defaultSize={defaultLayout[1]}
+              minSize={20}
+            >
 
-          </Panel>
-          <PanelResizeHandle className="mx-1  w-2 bg-slate-300 " />
+              <EditorBox
+                language="css"
+                editorValue={jsPanel.cssbase}
+                onChange={(value) => eventHandler.handleInputChangeCSS(value)}
+              />
 
-          <Panel
-            className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
-            defaultSize={defaultLayout[2]}
-            minSize={20}
-          >
+            </Panel>
+            <PanelResizeHandle className="mx-1  w-2 bg-slate-300 " />
+
+            <Panel
+              className="bg-slate-100 rounded-lg flex items-center justify-center text-center p-1"
+              defaultSize={defaultLayout[2]}
+              minSize={20}
+            >
 
 
-            <EditorBox
-              language="javascript"
-              editorValue={jsPanel.jsbase}
-              onChange={(value) => eventHandler.handleInputChangeJS(value)}
-            />
+              <EditorBox
+                language="javascript"
+                editorValue={jsPanel.jsbase}
+                onChange={(value) => eventHandler.handleInputChangeJS(value)}
+              />
 
-          </Panel>
-        </PanelGroup>
-      </Panel>
+            </Panel>
+          </PanelGroup>
+
+        )
+        }
+
+
+      </Panel >
       <PanelResizeHandle className="mx-1 my-2 h-2 bg-slate-300" />
 
       <Panel className="bg-slate-100 rounded-lg p-1"
@@ -169,7 +250,7 @@ const JSPanel: React.FC<JSPanelProps> = ({ onLayout, defaultLayout, jsPanel, eve
       >
         <Preview htmlbase={preview.html} cssbase={preview.css} code={preview.code} err={preview.err} />
       </Panel>
-    </PanelGroup>
+    </PanelGroup >
   )
 }
 
@@ -224,9 +305,7 @@ const PanelWrapperInner: React.FC<EditorBoxProps> = (
 
   const handleInputChangeTS = (input: string) => {
     console.log('e: ', input);
-let re;
-
-
+    let re;
     console.log('transpiled: ', re);
 
     setTs(input)
@@ -234,7 +313,37 @@ let re;
 
   return (
     <Box sx={{ height: `${frameHeight}px` }} >
-      {type === 'js'
+      {(() => {
+        switch (type) {
+          case 'js':
+            return <JSPanel
+              onLayout={onLayout}
+              defaultLayout={defaultLayout}
+              jsPanel={{ htmlbase, cssbase, jsbase }}
+              eventHandler={{ handleInputChangeHTML, handleInputChangeCSS, handleInputChangeJS }}
+              preview={{ html, css, code, err }}
+            />
+          case 'ts':
+            return <TSPanel
+              onLayout={onLayout}
+              defaultLayout={defaultLayout}
+              tsPanel={{ tsbase }}
+              eventHandler={{ handleInputChangeHTML, handleInputChangeCSS, handleInputChangeJS }}
+              preview={{ html, css, code, err }}
+            />
+          case 'rust':
+            return <RustPanel
+              onLayout={onLayout}
+              defaultLayout={defaultLayout}
+              rustPanel={{ rustbase }}
+              eventHandler={{ handleInputChangeHTML, handleInputChangeCSS, handleInputChangeJS }}
+              preview={{ html, css, code, err }}
+            />
+          default:
+            return null
+        }
+      })()}
+      {/* {type === 'js'
         ?
         <JSPanel
           onLayout={onLayout}
@@ -257,10 +366,10 @@ let re;
             onLayout={onLayout}
             defaultLayout={defaultLayout}
             tsPanel={{ tsbase }}
-            eventHandler={{ handleInputChangeTS}}
+            eventHandler={{ handleInputChangeTS }}
             preview={{ html, css, code, err }}
           />
-      }
+      } */}
 
     </Box>
 

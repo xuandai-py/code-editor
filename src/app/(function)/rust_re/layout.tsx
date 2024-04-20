@@ -2,7 +2,7 @@
 // this contains: JS navigation, 3 code editor, result, console
 
 import Navbar from "@/components/header/nav_bar"
-import { Box } from "@mui/material"
+import Box from "@mui/material/Box";
 
 // navigation: shared layout + bundle button  
 export default function JSLayout({

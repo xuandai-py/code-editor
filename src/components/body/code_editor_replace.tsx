@@ -1,8 +1,14 @@
 import activateMonacoJSXHighlighter from "@/helper/monacoHighlighter";
-import { setEditorRef } from "@/redux/editor_slice";
+// import { setEditorRef } from "@/redux/editor_slice";
 import { Editor, OnMount } from "@monaco-editor/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useCopyToClipboard } from "usehooks-ts";
+
+// new
+
+import { setEditorRef, setEditorRefObjet } from '@/redux/slice/editorSlice';
+import { useAppSelector } from '@/redux/store/index';
+import { jsbase } from "@/helper/files";
 
 
 
@@ -46,7 +52,7 @@ const BaseEditor: React.FC<BaseEditorProps> = ({
                 automaticLayout: true,
             }}
             onMount={onMount}
-        // onChange={(value) => onChange(value)}
+        // onChange={onMount}
         />
     );
 };
@@ -59,7 +65,15 @@ const EditorBox: React.FC<EditorBoxProps> = ({ language, editorValue, onChange }
 
     const handleEditorDidMount: OnMount = (editor, monaco) => {
         // editorRef.current = editor
+
+        // non-serializable look-up!!!!. Be aware of non-serializable err
         dispatch(setEditorRef({language: language, editor: editor}))
+        dispatch(setEditorRefObjet({ language: language, editor: editor }))
+        // obtain {language, editor} in to setEditorRef
+          
+        // make onChangeEvent
+        // dispatch(setEditorRef({ language: language, editor: editor }))
+
         // console.log(editor)
         editor.onDidChangeModelContent(() => {
             onChange(editor.getValue())
@@ -71,18 +85,21 @@ const EditorBox: React.FC<EditorBoxProps> = ({ language, editorValue, onChange }
         // setEditorRef.current.push(edito)
     }
 
-    const zoomLevel = useSelector((state) => state.editor.zoomLevel);
+    // const zoomLevel = useSelector((state) => state.editor.zoomLevel);
+    // const { zoomLevel } = store.getState().editor;
+    const { zoomLevel } = useAppSelector((state) => state.editor);
+
 
 
     return (
 
-            <BaseEditor
-                language={language}
-                value={editorValue}
-                zoomLevel={zoomLevel}
-                // zoomLevel={16}
-                onMount={handleEditorDidMount}
-            />
+        <BaseEditor
+            language={language}
+            value={editorValue}
+            zoomLevel={zoomLevel}
+            // zoomLevel={16}
+            onMount={ handleEditorDidMount}
+        />
     )
 }
 
@@ -103,3 +120,4 @@ const EditorBox: React.FC<EditorBoxProps> = ({ language, editorValue, onChange }
 
 
 export default EditorBox
+

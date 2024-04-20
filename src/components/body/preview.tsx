@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import JsonView from 'react18-json-view'
 import 'react18-json-view/src/style.css'
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Chip } from "@mui/material";
+import Chip from "@mui/material/Chip";
 // import './preview.css';
 
 interface PreviewProps {
@@ -58,7 +57,8 @@ function TabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
+          {/* <Typography>{children}</Typography> */}
         </Box>
       )}
     </div>
@@ -174,7 +174,7 @@ const Preview: React.FC<PreviewProps> = ({ code, err, htmlbase, cssbase }) => {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-       
+
         <iframe
           title='preview'
           style={{ color: '#000', minHeight: '200px', height: '450px', maxHeight: '800px', width: '100%' }}

@@ -1,4 +1,8 @@
-import { Container, CssBaseline, Divider, Stack, Typography } from '@mui/material'
+import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import DiffEditorWrapper from '@/components/body/diff_editor';
 
 const page = () => {
@@ -15,17 +19,19 @@ const page = () => {
     <>
       <CssBaseline />
       <Container maxWidth="xl">
-        <Stack direction="row" my={1} spacing={2} alignItems="center">
-          <Typography variant="h4" gutterBottom>
+        <Stack direction={{ xs: 'column', sm: 'row' }} my={1} spacing={2} alignItems="center">
+          <Typography sx={{ fontSize: {  sm: 'larger', md: 'xx-large' } }} gutterBottom>
             Differcences checker
           </Typography>
-          <Divider orientation="vertical" sx={{ height: 24, width: 2, color: 'gray' }} />
+          <Divider
+            orientation="vertical"
+            sx={{ height: 24, width: 2, color: 'gray', display: { xs: 'none', sm: 'inline-flex' } }} />
           <Typography variant="subtitle1" gutterBottom>
             Compare text to find the difference between two text files
           </Typography>
         </Stack>
 
-       <DiffEditorWrapper />
+        <DiffEditorWrapper />
       </Container>
     </>
   )

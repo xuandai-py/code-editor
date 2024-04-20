@@ -27,6 +27,26 @@ export const fetchPlugin = (inputCode: string) => {
             build.onLoad({ filter: /.*/ }, async (args: any) => {
                 const cachedResult = await fileCache.getItem<esbuild.OnLoadResult>(args.path)
                 if (cachedResult) return cachedResult
+                /**
+                 *  if (args.path.endsWith('.ts') || args.path.endsWith('.tsx')) {
+                    const { data, request } = await axios.get(args.path);
+
+                    const transformedCode = await esbuild.transform(data, {
+                        loader: 'ts',
+                        target: 'es2015',
+                    });
+
+                    const result: esbuild.OnLoadResult = {
+                        loader: 'jsx',
+                        contents: transformedCode.code,
+                        resolveDir: new URL('./', request.responseURL).pathname,
+                    }
+
+                    await fileCache.setItem(args.path, result)
+                    return result;
+                }
+
+                 */
             })
 
             build.onLoad({ filter: /.css$/ }, async (args: any) => {
@@ -70,18 +90,18 @@ export const fetchPlugin = (inputCode: string) => {
 
             })
 
-            // build.onLoad({ filter: /\.(js|jsx)$/ }, async (args: any) => {
-            //     const { data, request } = await axios.get(args.path);
-        
-            //     const result: esbuild.OnLoadResult = {
-            //       loader: 'jsx',
-            //       contents: data,
-            //       resolveDir: new URL('./', request.responseURL).pathname,
-            //     };
-        
-            //     await fileCache.setItem(args.path, result);
-            //     return result;
-            //   });
         }
     }
 }
+// build.onLoad({ filter: /\.(js|jsx)$/ }, async (args: any) => {
+//     const { data, request } = await axios.get(args.path);
+
+//     const result: esbuild.OnLoadResult = {
+//       loader: 'jsx',
+//       contents: data,
+//       resolveDir: new URL('./', request.responseURL).pathname,
+//     };
+
+//     await fileCache.setItem(args.path, result);
+//     return result;
+//   });

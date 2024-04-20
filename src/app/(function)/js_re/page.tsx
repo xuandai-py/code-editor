@@ -2,7 +2,8 @@
 import PanelWrapperInner from "@/components/body/panel_wrapper_inner";
 import { cookies } from "next/headers";
 import './page.css'
-import { Container, CssBaseline } from "@mui/material";
+import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
 
 const PanelWrapper = () => {
   const layout = cookies().get("react-resizable-panels:layout");

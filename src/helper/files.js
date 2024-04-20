@@ -173,7 +173,7 @@ fn main() {
   
   }
 `
-export const tsbase = 'const pseudo = ({input} : {input: string}) => console.log(input);'
+export const tsbase = `const pseudo = ({input} : {input: string}) => console.log('input: ', input);`
 
 export const files = [
   {
@@ -207,27 +207,29 @@ export const files = [
 
 export const langs = [
   {
-      'key': 'Javascript',
-      'path': '/js_re',
-      'status': true
+    'key': 'Javascript',
+    'path': '/js_re',
+    'status': true
   },
 
   {
-      'key': 'Rust',
-      'path': '/rust_re',
-      'status': false
+    'key': 'Rust',
+    'path': '/rust_re',
+    'status': false
   },
 
   {
-      'key': 'Typescript',
-      'path': '/ts_re',
-      'status': false
+    'key': 'Typescript',
+    'path': '/ts_re',
+    'status': false
   },
   {
-      'key': 'Diff-Editor',
-      'path': '/compare_re',
-      'status': true
+    'key': 'Diff-Editor',
+    'path': '/compare_re',
+    'status': true
   }
 ];
+
+
 // export  { files, rustbase, jsbase, htmlbase, cssbase }
 

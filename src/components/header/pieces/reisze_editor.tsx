@@ -1,8 +1,9 @@
-import * as React from 'react';
+import React from 'react'
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import MuiInput from '@mui/material/Input';
-import { Divider, Stack } from '@mui/material';
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
 import { useDispatch } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 
@@ -22,7 +23,7 @@ interface ResizeProps {
     dispatchTo: Dispatch,
     innerProps: ResizeInnerProps
 }
-const ResizeEditor: React.FC<ResizeProps> = ({ inputState, innerProps, dispatchTo }) => {
+const ResizeEditor: React.FC<ResizeProps> = ({ inputState, innerProps, dispatchTo, id }) => {
     const dispatch = useDispatch();
     // const zoomLevel = useSelector((state) => state.editor.zoomLevel);
 
@@ -47,17 +48,19 @@ const ResizeEditor: React.FC<ResizeProps> = ({ inputState, innerProps, dispatchT
     React.useEffect(() => {
         dispatch(dispatchTo(value))
     }, [value])
-
+    console.log('resize')
     return (
         <Stack direction="row" spacing={2}
-            sx={{ px:2 , borderRadius: 2, border: '1px solid gray', alignItems: 'center' }}
+            sx={{ px: 2, borderRadius: 2, border: '1px solid gray', alignItems: 'center' }}
         >
-            <Typography variant="subtitle1" gutterBottom sx={{ color: '#1976d2' }} >
+            <Typography variant="subtitle1" gutterBottom sx={{ color: '#1976d2', flexGrow: 1 }} >
                 {innerProps.title.toUpperCase()}
             </Typography>
             <Divider orientation="vertical" flexItem />
             <Input
                 value={value}
+                id={`in-${id}`}
+                className={id}
                 sx={{ width: 60 }}
                 // size='100px'
                 onChange={handleInputChange}
@@ -67,7 +70,7 @@ const ResizeEditor: React.FC<ResizeProps> = ({ inputState, innerProps, dispatchT
                     min: innerProps.min,
                     max: innerProps.max,
                     type: 'number',
-                    'aria-labelledby': 'input-slider',
+                    'aria-labelledby': id,
                 }}
             />
         </Stack>

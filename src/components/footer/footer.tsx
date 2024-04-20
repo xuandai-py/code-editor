@@ -38,7 +38,7 @@ const Footer = () => {
             m: 1,
           }}
         >
-          <Typography variant="caption" color="initial">
+          <Typography variant="caption" color="text.primary">
             Made with Next - MUI - Monaco editor and more
           </Typography>
         </Box>

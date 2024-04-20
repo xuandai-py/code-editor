@@ -1,4 +1,3 @@
-import Navbar from '@/components/header/nav_bar'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -6,7 +5,7 @@ import Footer from '@/components/footer/footer'
 import Providers from './util/provider'
 import { store } from '@/redux/store.ts'
 import ThemeRegistry from '@/components/theme_registry/ThemeRegistry'
-import { Box } from '@mui/material'
+import Box from "@mui/material/Box";
 import Corner from '@/components/theme_registry/octoSign'
 
 const inter = Inter({ subsets: ['latin'] })

@@ -1,7 +1,7 @@
 import * as esbuild from 'esbuild-wasm'
 
 
-
+// help to inspect and extract file/folder found in package 
 export const unpkgPlugin = () => {
     return {
         name: 'unpkg-plugin',
@@ -26,13 +26,6 @@ export const unpkgPlugin = () => {
                     namespace: 'a',
                     path: `https://unpkg.com/${args.path}`
                 }
-
-                // else if (args.path === 'tiny-test-pkg') {
-                //     return {
-                //         path: 'https://unpkg.com/tiny-test-pkg@1.0.0/index.js', 
-                //         namespace: 'a'
-                //     }
-                // }
             })
         }
     }

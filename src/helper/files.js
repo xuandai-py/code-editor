@@ -167,15 +167,15 @@ export const cssbase = `
   }
 `
 
-const rustbase = `
+export const rustbase = `
 fn main() {
   println!("{}", hello_wor);
   
   }
 `
+export const tsbase = `const pseudo = ({input} : {input: string}) => console.log('input: ', input);`
 
-
-const files = [
+export const files = [
   {
     name: "script.js",
     language: "javascript",
@@ -195,8 +195,41 @@ const files = [
     name: "",
     language: "rust",
     value: rustbase
+  },
+  {
+    name: 'script.ts',
+    language: 'typescript',
+    value: tsbase
   }
 ];
 
-export default { files, rustbase, jsbase, htmlbase, cssbase }
+
+
+export const langs = [
+  {
+    'key': 'Javascript',
+    'path': '/js_re',
+    'status': true
+  },
+
+  {
+    'key': 'Rust',
+    'path': '/rust_re',
+    'status': false
+  },
+
+  {
+    'key': 'Typescript',
+    'path': '/ts_re',
+    'status': false
+  },
+  {
+    'key': 'Diff-Editor',
+    'path': '/compare_re',
+    'status': true
+  }
+];
+
+
+// export  { files, rustbase, jsbase, htmlbase, cssbase }
 

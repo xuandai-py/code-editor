@@ -1,14 +1,27 @@
 import { jsbase } from "@/helper/files";
+import { Editor } from "@monaco-editor/react";
 import { createSlice } from "@reduxjs/toolkit";
+import { editor as monaco } from 'monaco-editor';
+import { LangSyntax } from '@/helper/constant'
 
 
+interface EditorActionPayload {
+  language: string;
+  editor: monaco.IStandaloneCodeEditor;
+}
+// declare const editorRef: Array<EditorActionPayload>;
 //  editorREf, zoomLevel, 
+export interface EditorState {
+
+}
+const language: LangSyntax = "typescript";
 const initialState = {
   zoomLevel: 15,
-  editorRef: null,
   frameHeight: 800,
+  editorRef: [],
   bundle: false,
-  script: jsbase
+  script: jsbase, 
+  scriptBundleOption: language,
 }
 
 
@@ -18,6 +31,14 @@ export const editor = createSlice({
   name: "editor",
   initialState,
   reducers: {
+    setEditorRef: (state, action) => {
+      const payload: EditorActionPayload = action.payload;
+      state.editorRef.push(payload);
+    },
+    setScriptBundleOption: (state, action) => {
+      state.scriptBundleOption = action.payload;
+    },
+
     getFrameHeight: (state, action) => {
       state.frameHeight = action.payload;
     },
@@ -26,9 +47,6 @@ export const editor = createSlice({
       state.zoomLevel = action.payload;
     },
 
-    setEditorRef: (state, action) => {
-      state.editorRef = action.payload;
-    },
 
     setBundle: (state, action) => {
       state.bundle = action.payload;

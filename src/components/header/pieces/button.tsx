@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { MouseEventHandler } from "react";
+// import MuiButton from "@mui/material/Button";
+import Button from '@mui/material/Button';
 
 type Props = {
     title: string,
@@ -12,7 +14,7 @@ type Props = {
     textColor?: string
 }
 
-const Button = ({ title, leftIcon, rightIcon, handleClick, submitting, type, bgColor, textColor }: Props) => (
+const ButtonBase = ({ title, leftIcon, rightIcon, handleClick, submitting, type, bgColor, textColor }: Props) => (
     <button
         type={type || 'button'}
         disabled={submitting || false}
@@ -27,4 +29,17 @@ const Button = ({ title, leftIcon, rightIcon, handleClick, submitting, type, bgC
     </button>
 )
 
-export default Button;
+export const CommonButtons = ({ onClickEvent, children }: { onClickEvent: MouseEventHandler, children: React.ReactNode }) => (
+    <Button
+        onClick={onClickEvent}
+        sx={{
+            color: { sx: '#1976D2', sm: 'white' },
+            p: 1,
+            width: '100%',
+            border: { xs: '1px solid #1976D2', sm: '1px solid white' }
+        }}
+    >
+        {children}
+    </Button>
+)
+export default ButtonBase;

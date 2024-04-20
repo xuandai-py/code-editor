@@ -3,5 +3,11 @@
     "next",
     "next/core-web-vitals",
     "prettier"
-  ]
+  ],
+  "plugins": [
+    "mui-path-imports"
+  ],
+  "rules": {
+    "mui-path-imports/mui-path-imports": "error"
+  }
 }
